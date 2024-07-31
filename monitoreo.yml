@@ -1,0 +1,186 @@
+# Conjunto de servidores que funcionan para hacer monitoreo de equipos
+
+# Le doy un nombre descriptivo al stack para saber de que se trata
+name: monitoreo
+
+services:
+  # Base de datos para utilizar con grafana, sirve para recolectar datos de varias fuentes
+  # https://prometheus.io/docs/prometheus/latest/installation/
+  # https://docker-ip:9090/
+  prometheus:
+     # Le doy un nombre al dock
+    container_name: prometheus
+    image: prom/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+    # Configuracion de puertos, no lo declara puertos ya que uso la configuracion de la red y NPM
+    # ports:
+     # - '9090:9090'
+    # Configuracion de discos
+    # Es muy importante que los directorios existan para que el stack funcione
+    volumes:
+      - prometheus-config:/etc/prometheus
+      - prometheus-data:/prometheus
+    depends_on:
+      - node-exporter
+      - blackbox-exporter
+      - cadvisor
+    # Le doy un nombre al host para referirlo con NPM
+    hostname: prometheus
+    networks:
+      lan_docker:
+        # Si queremos darle una IP estatica cambiamos la siguiente linea
+        # ipv4_address: 192.168.200.254
+  # FIN prometheus
+
+  # Motor para crear graficos y dashboards desde distintos servicios, proetheus, loki, zabbix, etc
+  # https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/
+  # https://docker-ip:3000/
+  # Usuario y pass: admin
+  grafana:
+    # Le doy un nombre al dock
+    container_name: grafana
+    image: grafana/grafana-oss
+    restart: always
+    # Configuracion de puertos, no lo declara puertos ya que uso la configuracion de la red y NPM
+    # ports:
+      # - "3000:3000"
+    # Hago varias configuraciones interesantes
+    environment:
+      # Le doy una url para que sea mas facil ingresar
+      - GF_SERVER_ROOT_URL=http://grafana.servidor.com/
+      # Plugin de un reloj bastante configurable
+      - GF_INSTALL_PLUGINS=grafana-clock-panel, alexanderzobnin-zabbix-app
+      # Plugin para obtener datos desde zabbix
+      - GF_INSTALL_PLUGINS=alexanderzobnin-zabbix-app
+      # Se puede definir un usuario y contraseña para no utilizar el que viene por defecto
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=CambiaMe
+    # Configuracion de discos
+    # Es muy importante que los directorios existan para que el stack funcione
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    # Le doy un nombre al host para referirlo con NPM
+    hostname: grafana
+    networks:
+      lan_docker:
+        # Si queremos darle una IP estatica cambiamos la siguiente linea
+        # ipv4_address: 192.168.200.254
+  # FIN grafana
+
+  # Contenedor para obtener informacion de la maquina
+  # https://github.com/prometheus/node_exporter
+  # https://prometheus.io/docs/guides/node-exporter/
+  node-exporter:
+    # Le doy un nombre al dock
+    container_name: node-exporter
+    image: prom/node-exporter:latest
+    restart: unless-stopped
+    # Como es en el mismo servidor donde se corre este exporter no abro el puerto
+    # ports:
+      # - '9100:9100'
+    # No tiene directorios especiales ya que guarda los datos en la BD de prometheus
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    # Le doy un nombre al host para referirlo en la configuracion de prometheus
+    hostname: node-exporter
+    networks:
+      lan_docker:
+        # Si queremos darle una IP estatica cambiamos la siguiente linea
+        # ipv4_address: 192.168.200.254
+  # FIN node-exporter
+
+  # Con este contenedor vamos a obtener informacion de cualquier pagina web
+  # https://github.com/prometheus/blackbox_exporter
+  # https://github.com/prometheus-community/prometheus-playground/blob/master/blackbox-exporter/docker-compose.yml
+  blackbox-exporter:
+    # Le doy un nombre al dock
+    container_name: blackbox-exporter
+    image: prom/blackbox-exporter:latest
+    restart: unless-stopped
+    # Como es en el mismo servidor donde se corre este exporter no abro el puerto
+    # ports:
+      # - '9115:9115'
+    # Le doy un nombre al host para referirlo en la configuracion de prometheus
+    hostname: blackbox-exporter
+    networks:
+      lan_docker:
+      # Si queremos darle una IP estatica cambiamos la siguiente linea
+      # ipv4_address: 192.168.200.254
+  # FIN blackbox-exporter
+
+  # Este contenedor monitorizamos docker
+  # https://prometheus.io/docs/guides/cadvisor/#docker-compose-configuration
+  # https://grafana.com/grafana/dashboards/893-main/
+  # https://github.com/google/cadvisor
+  cadvisor:
+    # Le doy un nombre al dock
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor #google/cadvisor:latest
+    restart: unless-stopped
+    # Como es en el mismo servidor donde se corre este exporter no abro el puerto
+    # ports:
+      # - '8080:8080'
+    # No tiene directorios especiales ya que guarda los datos en la BD de prometheus
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    # Le doy un nombre al host para referirlo en la configuracion de prometheus 
+    hostname: cadvisor
+    networks:
+      lan_docker:
+      # Si queremos darle una IP estatica cambiamos la siguiente linea
+      # ipv4_address: 192.168.200.254
+  # FIN cadvisor
+
+# Declaramos la red que vamos a utilizar
+networks:
+  # Configuracion de la red lan_docker, si ya hay una red configurada dejamos esta linea y cambiamos el nombre por el correcto
+  lan_docker:
+    external: true
+    # Para utilizar solo este repositorio hay que configurar bien la red, comentar la linea de arriba y dejal activas las siguientes:
+    # driver: bridge
+    # ipam:
+      # config:
+        # - subnet: 192.168.200.0/24
+          # gateway: 192.168.200.1
+
+# Como hago uso de los volumenes para persistencia de datos en esta seccion se declaran los directorios, es muy importante que los directorios existan para que el stack funcione
+volumes:
+  # Volumen ara guardar las configuraciones de prometheus
+  prometheus-config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/docker-data/prometheus/config # Esta es la ruta donde van a quedar los datos persistentes
+      o: bind
+    name: prometheus-config
+  # Volumen ara guardar los datos de prometheus
+  prometheus-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/docker-data/prometheus/data # Esta es la ruta donde van a quedar los datos persistentes
+      o: bind
+    name: prometheus-data
+  # Volumen ara guardar los datos de grafana
+  grafana-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/docker-data/grafana-data # Esta es la ruta donde van a quedar los datos persistentes
+      o: bind
+    name: grafana-data
