@@ -16,3 +16,14 @@ prometheus-data<br>
 grafana-data<br>
 
 Si no existen en el directorio (en mi caso /mnt/docker-data) va a dar error al levantar el stack.
+
+<h2>Configuracion</h2>
+Hay cinco archivos de configuracion que van en la carpeta /etc/prometheus del docker:
+
+1) **prometheus-config.yml** esta con una configuracion personalizada con una configuracion basica para tener el monitoreo local con los 3 modulos, toma la lista de un archivo para obtener una lista de paginas web para monitorizar, Hay que renombrarlo como **prometheus.yml**
+2) **blackbox-targets.yml** contiene una lista de paginas que se van a monitorizar, se pueden agreagar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Podemos monitorizar la URL, IP publica e IP privada.
+3) **nodes-targets.yml** contiene una lista de servidores que se van a monitorizar, se pueden agreagar con etiquetas. Aca ponemos los servidores con node-exporter y para las maquinas que tienen docker ponemos la direccion con el puerto 8080 para ver los datos de cadvisor.
+4) **ssl-docker-targets.yml** contiene una lista de paginas que se van a monitorizar, se pueden agreagar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Tenemos que monitorizar la URL, IP publica e IP privada se monitorizan con otro archivo.
+5) **ping-targets.yml** contiene una lista de IP publicas y privadas de los servidores docker que se van a monitorizar, se pueden agreagar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Se utiliza blackbox para hacer los pings.
+
+Tambien hay dos arcjivos .json que tienen dos dashboard de ejemplo: **Monitoreo Docker.json** este dashboard monitorea los certificados ssl de las paginas web que tengamos y la utilizacion de RAM, CPU, trafico de red, etc. de nuestro servidor docker. **Monitoreo Paginas Web.json** monitores paginas web individuales que esten en algun servidor linux, al igual que con docker monitores certificados ssl, RAM, CPU, etc.
