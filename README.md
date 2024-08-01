@@ -1,12 +1,9 @@
 # Grafana
 Son varios archivos para poder montar un servidor con [Prometheus](https://prometheus.io/) y [Grafana](https://grafana.com/) para monitorear equipos que tengamos, ademas estan los exporters y archivos de configuracion para agregar equipos al servidor.<br>
-Este archivo lo probe con un servidor manejado con el repositorio [Mikiztly/portainer](https://github.com/Mikiztly/portainer) y ya tiene configurada una red interna, tambien utiliza Nginx-Proxy-Manager para manejar sub-dominios y asi poder tener direcciones web en vez de IP's. Si se va a utilizar solo este repositorio hay que configurar bien la red
+Este archivo lo probe con un servidor manejado con el repositorio [Mikiztly/portainer](https://github.com/Mikiztly/portainer) y ya tiene configurada una red interna, tambien utiliza Nginx-Proxy-Manager para manejar sub-dominios y asi poder tener direcciones web en vez de IP's. Si se va a utilizar solo este repositorio hay que configurar bien la red.<br>
+Agregue un explorador de archivos llamado [File Browser](https://filebrowser.org/) ya que vamos a necesitar modificar bastante los archivos de configuracion esta opcion nos da acceso a los archivos de configuracion del servidor sin utilizar ftp, ssh, etc.
 
-**monitoreo.yml**<br>
-Se puede utilizar en la consola:<br>
-wget -O docker-compose.yml https://github.com/Mikiztly/docker/raw/main/compose/monitoreo.yml
-
-En este archivo esta configurado un stack donde funcionan Prometheus junto con Grafana, tambien estan los exporters [node-exporter](https://github.com/prometheus/node_exporter) para monitorizar el sistema. [blackbox-exporter](https://github.com/prometheus/blackbox_exporter) que nos permite monitorizar paginas web, [cadvisor](https://github.com/google/cadvisor) que permite ver las estadisticas de docker.
+El archivo **docker-compose.yml** tiene ya configurado un stack donde funcionan Prometheus junto con Grafana, tambien estan los exporters [node-exporter](https://github.com/prometheus/node_exporter) para monitorizar el sistema. [blackbox-exporter](https://github.com/prometheus/blackbox_exporter) que nos permite monitorizar paginas web, [cadvisor](https://github.com/google/cadvisor) que permite ver las estadisticas de docker.
 
 **IMPORTANTE**<br>
 Como le agregue el mapeo de volumenes a otro directorio para tener persistencia de datos, en el directorio configurado tienen que existir las liguientes carpetas antes de levantar el stack:
@@ -18,7 +15,7 @@ grafana-data<br>
 Si no existen en el directorio (en mi caso /mnt/docker-data) va a dar error al levantar el stack.
 
 <h2>Configuracion</h2>
-Hay cinco archivos de configuracion que van en la carpeta /etc/prometheus del docker:
+Hay cinco archivos de configuracion que van en la carpeta **prometheus-config** que definimos en el docker:<br>
 
 1) **prometheus-config.yml** esta con una configuracion personalizada con una configuracion basica para tener el monitoreo local con los 3 modulos, toma la lista de un archivo para obtener una lista de paginas web para monitorizar, Hay que renombrarlo como **prometheus.yml**
 2) **blackbox-targets.yml** contiene una lista de paginas que se van a monitorizar, se pueden agreagar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Podemos monitorizar la URL, IP publica e IP privada.
