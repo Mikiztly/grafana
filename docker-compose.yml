@@ -36,7 +36,6 @@ services:
   # Motor para crear graficos y dashboards desde distintos servicios, proetheus, loki, zabbix, etc
   # https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/
   # https://docker-ip:3000/
-  # Usuario y pass: admin
   grafana:
     # Le doy un nombre al dock
     container_name: grafana
@@ -50,7 +49,7 @@ services:
       # Le doy una url para que sea mas facil ingresar
       - GF_SERVER_ROOT_URL=http://grafana.servidor.com/
       # Plugin de un reloj bastante configurable
-      - GF_INSTALL_PLUGINS=grafana-clock-panel, alexanderzobnin-zabbix-app
+      - GF_INSTALL_PLUGINS=grafana-clock-panel
       # Plugin para obtener datos desde zabbix
       - GF_INSTALL_PLUGINS=alexanderzobnin-zabbix-app
       # Se puede definir un usuario y contraseña para no utilizar el que viene por defecto
