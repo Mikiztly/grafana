@@ -163,23 +163,23 @@ services:
   # Este es un explorador de archivos donde podemos ver editar , subir, etc archivos desde el servidor. Muy util para evitar utilizar ssh o ftp
   # https://filebrowser.org/installation
   # Usuario y Password: admin
-  file-browser:
+#  file-browser:
     # Le doy un nombre al dock
-    container_name: file-browser
-    image: filebrowser/filebrowser
+#    container_name: file-browser
+#    image: filebrowser/filebrowser
     # Configuracion de puertos, no lo declara puertos ya que uso la configuracion de la red y NPM
     # ports:
       # - "8080:80"
-    restart: always
+#    restart: always
     # Le activo la terminal
-    tty: true
+#    tty: true
     # Configuracion de discos, con esto le vamos a indicar en que directorio estan los archivos de configuracion de nuestro stack
-    volumes:
-      - /mnt/docker-data:/srv
+#    volumes:
+#      - /mnt/docker-data:/srv
     # Le doy un nombre al host para referirlo con NPM
-    hostname: file-browser
-    networks:
-      lan_docker:
+#    hostname: file-browser
+#    networks:
+#      lan_docker:
 # FIN file-browser
 
 # Declaramos la red que vamos a utilizar

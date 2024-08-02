@@ -1,7 +1,7 @@
 # Monitor Prometheus y Grafana
 Son varios archivos para poder montar un servidor con [Prometheus](https://prometheus.io/) y [Grafana](https://grafana.com/) para monitorear equipos que tengamos, ademas estan los exporters y archivos de configuracion para agregar equipos al servidor.<br>
 Este archivo lo probe con un servidor manejado con el repositorio [Mikiztly/portainer](https://github.com/Mikiztly/portainer) y ya tiene configurada una red interna, tambien utiliza Nginx-Proxy-Manager para manejar sub-dominios y asi poder tener direcciones web en vez de IP's. Si se va a utilizar solo este repositorio hay que configurar bien la red.<br>
-Agregue un explorador de archivos llamado [File Browser](https://filebrowser.org/) ya que vamos a necesitar modificar bastante los archivos de configuracion esta opcion nos da acceso a los archivos de configuracion del servidor sin utilizar ftp, ssh, etc.
+Agregue un explorador de archivos llamado [File Browser](https://filebrowser.org/) ya que vamos a necesitar modificar bastante los archivos de configuracion esta opcion nos da acceso a los archivos de configuracion del servidor sin utilizar ftp, ssh, etc. Esto lo comente para no cargarlo por defecto, en el repositorio [Mikiztly/portainer](https://github.com/Mikiztly/portainer) ya lo tengo agregado.
 
 El archivo **docker-compose.yml** tiene ya configurado un stack donde funcionan Prometheus junto con Grafana, tambien estan los exporters [node-exporter](https://github.com/prometheus/node_exporter) para monitorizar el sistema. [blackbox-exporter](https://github.com/prometheus/blackbox_exporter) que nos permite monitorizar paginas web, [cadvisor](https://github.com/google/cadvisor) que permite ver las estadisticas de docker.
 
