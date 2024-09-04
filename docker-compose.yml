@@ -36,7 +36,6 @@ services:
   # Motor para crear graficos y dashboards desde distintos servicios, proetheus, loki, zabbix, etc
   # https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/
   # https://docker-ip:3000/
-  # Usuario y pass: admin
   grafana:
     # Le doy un nombre al dock
     container_name: grafana
