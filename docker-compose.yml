@@ -19,8 +19,8 @@ services:
     # Configuracion de discos
     # Es muy importante que los directorios existan para que el stack funcione
     volumes:
-      - prometheus-config:/etc/prometheus
-      - prometheus-data:/prometheus
+      - ${DOCKER_PATH}/prometheus/config:/etc/prometheus
+      - ${DOCKER_PATH}/prometheus/data:/prometheus
     depends_on:
       - node-exporter
       - blackbox-exporter
@@ -51,14 +51,14 @@ services:
       # Plugin de un reloj bastante configurable
       - GF_INSTALL_PLUGINS=grafana-clock-panel
       # Plugin para obtener datos desde zabbix
-      - GF_INSTALL_PLUGINS=alexanderzobnin-zabbix-app
+      # - GF_INSTALL_PLUGINS=alexanderzobnin-zabbix-app
       # Se puede definir un usuario y contraseña para no utilizar el que viene por defecto
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=CambiaMe
     # Configuracion de discos
     # Es muy importante que los directorios existan para que el stack funcione
     volumes:
-      - grafana-data:/var/lib/grafana
+      - ${DOCKER_PATH}/grafana:/var/lib/grafana
     depends_on:
       - prometheus
     # Le doy un nombre al host para referirlo con NPM
@@ -193,29 +193,3 @@ networks:
         # - subnet: 192.168.200.0/24
           # gateway: 192.168.200.1
 
-# Como hago uso de los volumenes para persistencia de datos en esta seccion se declaran los directorios, es muy importante que los directorios existan para que el stack funcione
-volumes:
-  # Volumen ara guardar las configuraciones de prometheus
-  prometheus-config:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/docker-data/prometheus/config # Esta es la ruta donde van a quedar los datos persistentes
-      o: bind
-    name: prometheus-config
-  # Volumen ara guardar los datos de prometheus
-  prometheus-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/docker-data/prometheus/data # Esta es la ruta donde van a quedar los datos persistentes
-      o: bind
-    name: prometheus-data
-  # Volumen ara guardar los datos de grafana
-  grafana-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/docker-data/grafana-data # Esta es la ruta donde van a quedar los datos persistentes
-      o: bind
-    name: grafana-data

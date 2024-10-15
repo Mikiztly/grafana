@@ -8,14 +8,14 @@ El archivo **docker-compose.yml** tiene ya configurado un stack donde funcionan 
 **IMPORTANTE**<br>
 Como le agregue el mapeo de volumenes a otro directorio para tener persistencia de datos, en el directorio configurado tienen que existir las siguientes carpetas antes de levantar el stack:
 
-prometheus-config<br>
-prometheus-data<br>
-grafana-data<br>
+prometheus/config<br>
+prometheus/data<br>
+grafana<br>
 
 Si no existen en el directorio (en mi caso /mnt/docker-data) va a dar error al levantar el stack.
 
 # Configuracion
-Hay cinco archivos de configuracion que van en la carpeta **prometheus-config** que definimos en el docker:<br>
+Hay cinco archivos de configuracion que van en la carpeta **prometheus/config** que definimos en el docker:<br>
 
 1) **prometheus.yml** esta con una configuracion personalizada basica para tener el monitoreo local con los 3 modulos, toma la lista de un archivo para obtener una lista de paginas web para monitorizar.
 
