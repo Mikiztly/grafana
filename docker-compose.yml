@@ -131,6 +131,28 @@ services:
       lan_docker:
   # FIN grafana
 
+  # Este es un explorador de archivos donde podemos ver, subir, etc archivos desde el servidor. Muy util para evitar utilizar ssh o ftp
+  # https://filebrowser.org/installation
+  # Usuario y Password: admin
+#  file-browser:
+    # Le doy un nombre al dock
+#    container_name: file-browser
+#    image: filebrowser/filebrowser
+    # Configuracion de puertos, no lo declara puertos ya que uso la configuracion de la red y NPM
+    # ports:
+      # - "8080:80"
+#    restart: always
+    # Le activo la terminal
+#    tty: true
+    # Como hago uso de los volumenes para persistencia de datos aca se declaran los directorios, es muy importante que los directorios existan para que el stack funcione. Utilizo la variable ${PATH_DATA} definida en el archivo.env para referirme al directorio.
+#    volumes:
+#      - ${DOCKER_PATH}:/srv
+    # Le doy un nombre al host para referirlo con NPM
+#    hostname: file-browser
+#    networks:
+#      lan_docker:
+  # FIN file-browser
+
 # Declaramos la red que vamos a utilizar
 networks:
   # Configuracion de la red lan_docker
