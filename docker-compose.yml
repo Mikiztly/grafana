@@ -113,9 +113,12 @@ services:
     # Hago varias configuraciones interesantes
     environment:
       # Le doy una url para que sea mas facil ingresar
-      - GF_SERVER_ROOT_URL=http://grafana.strong.local/
-      # Plugin de un reloj bastante configurable, tambien el plugin para tener datos desde zabbix
-      - GF_INSTALL_PLUGINS=grafana-clock-panel, alexanderzobnin-zabbix-app
+      - GF_SERVER_ROOT_URL=${GRAFANA_URL}
+      # Plugins para cargar
+      - GF_INSTALL_PLUGINS=${GRAFANA_PLUGINS}
+      # Se puede definir un usuario y contraseña para no utilizar el que viene por defecto
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS}
     # Configuracion de discos
     # Es muy importante que los directorios existan para que el stack funcione
     volumes:
