@@ -19,8 +19,8 @@ services:
     # Configuracion de discos
     # Es muy importante que los directorios existan para que el stack funcione
     volumes:
-      - ${DOCKER_PATH}/prometheus/config:/etc/prometheus
-      - ${DOCKER_PATH}/prometheus/data:/prometheus
+      - /mnt/docker-data/prometheus/config:/etc/prometheus
+      - /mnt/docker-data/prometheus/data:/prometheus
     depends_on:
       - node-exporter
       - blackbox-exporter
@@ -58,7 +58,7 @@ services:
     # Configuracion de discos
     # Es muy importante que los directorios existan para que el stack funcione
     volumes:
-      - ${DOCKER_PATH}/grafana:/var/lib/grafana
+      - /mnt/docker-data/grafana:/var/lib/grafana
     depends_on:
       - prometheus
     # Le doy un nombre al host para referirlo con NPM
