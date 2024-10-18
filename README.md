@@ -1,12 +1,21 @@
 # Monitor Prometheus y Grafana
-Son varios archivos para poder montar un servidor con [Prometheus](https://prometheus.io/) y [Grafana](https://grafana.com/) para monitorear equipos que tengamos, ademas están los exporters [node-exporter](https://github.com/prometheus/node_exporter) para monitorizar el sistema. [blackbox-exporter](https://github.com/prometheus/blackbox_exporter) que nos permite monitorizar paginas web, [cadvisor](https://github.com/google/cadvisor) que permite ver las estadísticas de docker.<br>
+Son varios archivos para poder montar un servidor con [Prometheus](https://prometheus.io/) y [Grafana](https://grafana.com/) para monitorear equipos que tengamos, ademas están los exporters [node-exporter](https://github.com/prometheus/node_exporter) para monitorizar el sistema. [blackbox-exporter](https://github.com/prometheus/blackbox_exporter) que nos permite monitorizar paginas web, [cadvisor](https://github.com/google/cadvisor) que permite ver las estadísticas de docker. Para monitorizar los certificados ssl de los contenedores de docker agregue [ssl_exporter](https://github.com/ribbybibby/ssl_exporter) el cual permite monitorizar dentro del contenedor el certificado ssl.<br>
 Este archivo lo probe con un servidor manejado con el repositorio [Mikiztly/portainer](https://github.com/Mikiztly/portainer) y ya tiene configurada una red interna, ademas utiliza Nginx-Proxy-Manager para manejar sub-dominios y asi poder tener direcciones web en vez de IP's. Para importar este repositorio en Portainer hay que poner la url del repositorio de la siguiente manera:<br>
 
 ![importar](/imagenes/importar.png)<br>
 
-También hay que configurar las variables correctamente, es muy util GRAFANA_PLUGINS porque podemos agregar plugins como per ejemplo "alexanderzobnin-zabbix-app" para obtener datos desde Zabbix.<br>
+También hay que configurar las variables correctamente, es muy util GRAFANA_PLUGINS porque podemos agregar plugins como per ejemplo "alexanderzobnin-zabbix-app" para obtener datos desde Zabbix. Los nombres de los plugins se los separa con una coma (,).<br>
 
 ![Configurar Variables](/imagenes/variables.png)<br>
+
+Para facilitar las variables aca deo una lista para copiar y pegar:
+```shell
+GRAFANA_URL=http://grafana.servidor.local/
+GRAFANA_PLUGINS=grafana-clock-panel
+GRAFANA_ADMIN=admin
+GRAFANA_PASS=CambiaMe
+DOCKER_PATH=/mnt/docker-data
+```
 
 Si se va a utilizar solo este repositorio hay que configurar bien la red y las variables.<br>
 

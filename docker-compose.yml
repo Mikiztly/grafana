@@ -62,7 +62,7 @@ services:
     # Este contenedor es el que va a monitoreear los certificados ssl de docker
   # https://github.com/ribbybibby/ssl_exporter
   # https://grafana.com/grafana/dashboards/11279-ssl-cerificates/
-  ssl-cert:
+  ssl-docker:
     container_name: ssl-cert
     image: ribbybibby/ssl-exporter
     restart: unless-stopped
@@ -70,10 +70,10 @@ services:
     ports:
       - '9219:9219'
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
-    hostname: ssl-cert
+    hostname: ssl-docker
     networks:
       lan-docker:
-  # FIN ssl-cert
+  # FIN ssl-docker
 
   # Con esto vamos a obtener informacion de la pagina web
   # https://github.com/prometheus/blackbox_exporter
