@@ -28,7 +28,7 @@ services:
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
     hostname: prometheus
     networks:
-      lan_docker:
+      lan-docker:
         # ipv4_address: 192.168.200.254
   # FIN prometheus
 
@@ -56,7 +56,7 @@ services:
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
     hostname: node-exporter
     networks:
-      lan_docker:
+      lan-docker:
   # FIN node-exporter
 
   # Con esto vamos a obtener informacion de la pagina web
@@ -72,7 +72,7 @@ services:
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
     hostname: blackbox-exporter
     networks:
-      lan_docker:
+      lan-docker:
   # FIN blackbox-exporter
 
   # Este contenedor es el que va a monitoreear docker
@@ -95,7 +95,7 @@ services:
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
     hostname: cadvisor
     networks:
-      lan_docker:
+      lan-docker:
   # FIN cadvisor
 
   # Motor para crear graficos y dashboards desde distintos servicios, proetheus, loki, zabbix, etc
@@ -128,7 +128,7 @@ services:
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
     hostname: grafana
     networks:
-      lan_docker:
+      lan-docker:
   # FIN grafana
 
   # Este es un explorador de archivos donde podemos ver, subir, etc archivos desde el servidor. Muy util para evitar utilizar ssh o ftp
@@ -150,13 +150,13 @@ services:
     # Le doy un nombre al host para referirlo con NPM
 #    hostname: file-browser
 #    networks:
-#      lan_docker:
+#      lan-docker:
   # FIN file-browser
 
 # Declaramos la red que vamos a utilizar
 networks:
-  # Configuracion de la red lan_docker
-  lan_docker:
+  # Configuracion de la red lan-docker
+  lan-docker:
     external: true
 
 # Como hago uso de los volumenes aca hago las declaraciones
