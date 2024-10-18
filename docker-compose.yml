@@ -42,8 +42,8 @@ services:
     image: prom/node-exporter:latest
     restart: unless-stopped
     # Para que se pueda conectar tenemos que exponer el puerto
-    # ports:
-      # - '9100:9100'
+    ports:
+      - '9100:9100'
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -59,6 +59,22 @@ services:
       lan-docker:
   # FIN node-exporter
 
+    # Este contenedor es el que va a monitoreear los certificados ssl de docker
+  # https://github.com/ribbybibby/ssl_exporter
+  # https://grafana.com/grafana/dashboards/11279-ssl-cerificates/
+  ssl-cert:
+    container_name: ssl-cert
+    image: ribbybibby/ssl-exporter
+    restart: unless-stopped
+    # Para que se pueda conectar tenemos que exponer el puerto
+    ports:
+      - '9219:9219'
+    # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
+    hostname: ssl-cert
+    networks:
+      lan-docker:
+  # FIN ssl-cert
+
   # Con esto vamos a obtener informacion de la pagina web
   # https://github.com/prometheus/blackbox_exporter
   # https://github.com/prometheus-community/prometheus-playground/blob/master/blackbox-exporter/docker-compose.yml
@@ -67,8 +83,8 @@ services:
     image: prom/blackbox-exporter:latest
     restart: unless-stopped
     # Para que se pueda conectar tenemos que exponer el puerto
-    # ports:
-      # - '9115:9115'
+    ports:
+      - '9115:9115'
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
     hostname: blackbox-exporter
     networks:
@@ -90,8 +106,8 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     # Para que se pueda conectar tenemos que exponer el puerto
-    # ports:
-      # - '8080:8080'
+    ports:
+      - '8080:8080'
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
     hostname: cadvisor
     networks:

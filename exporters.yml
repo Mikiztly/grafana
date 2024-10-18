@@ -10,9 +10,9 @@ services:
     container_name: node-exporter
     image: prom/node-exporter:latest
     restart: unless-stopped
-    # Como es en el mismo servidor donde se corre este exporter no abro el puerto
-    # ports:
-      # - '9100:9100'
+    # Para que se pueda conectar tenemos que exponer el puerto
+    ports:
+      - '9100:9100'
     # No tiene directorios especiales ya que guarda los datos en la BD de prometheus
     volumes:
       - /proc:/host/proc:ro
@@ -38,6 +38,7 @@ services:
     container_name: ssl-cert
     image: ribbybibby/ssl-exporter
     restart: unless-stopped
+    # Para que se pueda conectar tenemos que exponer el puerto
     ports:
       - '9219:9219'
     # Le doy un nombre al stack para referirlo con NPM y le damos la red correspondiente
@@ -54,9 +55,9 @@ services:
     container_name: blackbox-exporter
     image: prom/blackbox-exporter:latest
     restart: unless-stopped
-    # Como es en el mismo servidor donde se corre este exporter no abro el puerto
-    # ports:
-      # - '9115:9115'
+    # Para que se pueda conectar tenemos que exponer el puerto
+    ports:
+      - '9115:9115'
     # Le doy un nombre al host para referirlo en la configuracion de prometheus
     hostname: blackbox-exporter
     networks:
@@ -74,9 +75,9 @@ services:
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor #google/cadvisor:latest
     restart: unless-stopped
-    # Como es en el mismo servidor donde se corre este exporter no abro el puerto
-    # ports:
-      # - '8080:8080'
+    # Para que se pueda conectar tenemos que exponer el puerto
+    ports:
+      - '8080:8080'
     # No tiene directorios especiales ya que guarda los datos en la BD de prometheus
     volumes:
       - /:/rootfs:ro
