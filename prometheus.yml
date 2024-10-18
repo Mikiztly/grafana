@@ -36,7 +36,7 @@ scrape_configs:
   # <ESTADO> -> Esto lo utilizo para agrupar las paginas, por ejemplo: Produccion / Pruebas / Desarrollo
   # <TIPO_IP> -> Otra etiqueta para saber que estoy monitorizando: URL - PUBLICA - PRIVADA
   # <INSTANCIA> -> Es el nombre de la INSTANCIA para saber que pagina se monitorea
-  - job_name: 'monitoreo-web'
+  - job_name: 'blackbox'
     metrics_path: /probe
     file_sd_configs: # Indicamos el path del archivo para obtener la lista de sitios que vamos a monitorizar
       - files:
@@ -77,7 +77,7 @@ scrape_configs:
   # <NODE_EXPORTER_IP_PORT> -> aca va la IP/Direccion en donde corre el node-exporter
   # <ESTADO> -> Esto lo utilizo para agrupar los servidores, por ejemplo: Produccion / Pruebas / Desarrollo
   # <INSTANCIA> -> Es el nombre de la INSTANCIA para saber que servidor monitorea
-  - job_name: 'monitoreo-servers'
+  - job_name: 'nodes-targets'
     metrics_path: /metrics
     file_sd_configs: # Indicamos el path del archivo para obtener la lista de sitios que vamos a monitorizar
       - files:
