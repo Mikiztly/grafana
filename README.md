@@ -1,11 +1,10 @@
 <h1 id="Servidor Prometheus y Grafana>">Servidor Prometheus y Grafana</h1>
 
-
 Este repositorio lo configure con un servidor manejado con otro repositorio: [Mikiztly/portainer](https://github.com/Mikiztly/portainer) el cual tiene configurada una red interna llamada “lan-docker”, además utiliza [Nginx-Proxy-Manager](https://nginxproxymanager.com/) para manejar sub-dominios y así poder tener direcciones web en vez de IP's.<br>
 Son varios archivos para poder montar un servidor con Prometheus y Grafana para monitorear los equipos que tengamos, además están los exporters:<br>
 
-* [node-exporter](https://github.com/prometheus/node_exporter) para monitorizar sistemas Linux.
-* [blackbox-exporter](https://github.com/prometheus/blackbox_exporter) para monitorizar páginas web.
+* [node_exporter](https://github.com/prometheus/node_exporter) para monitorizar sistemas Linux.
+* [blackbox_exporter](https://github.com/prometheus/blackbox_exporter) para monitorizar páginas web.
 * [cadvisor](https://github.com/google/cadvisor) para ver las estadísticas de docker.
 * [ssl_exporter](https://github.com/ribbybibby/ssl_exporter) para monitorizar dentro de contenedores docker el certificado ssl.<br>
 
@@ -46,11 +45,11 @@ Hay cinco archivos de configuración que van en la carpeta **prometheus/config**
 
 2) **blackbox-targets.yml** contiene una lista de páginas que se van a monitorizar, se pueden agregar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Podemos monitorizar la URL, IP pública e IP privada.
 
-3) **nodes-targets.yml** contiene una lista de servidores que se van a monitorizar, se pueden agregar con etiquetas. Acá ponemos los servidores con node-exporter y para las máquinas que tienen docker ponemos la dirección con el puerto 8080 para ver los datos de cadvisor.
+3) **nodes-targets.yml** contiene una lista de servidores que se van a monitorizar, se pueden agregar con etiquetas. Acá ponemos los servidores con node_exporter y para las máquinas que tienen docker ponemos la dirección con el puerto 8080 para ver los datos de cadvisor.
 
 4) **ping-targets.yml** contiene una lista de IP públicas y privadas de los servidores docker que se van a monitorizar, se pueden agregar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Se utiliza blackbox para hacer los pings.
 
-5) **ssl-docker-targets.yml** contiene una lista de páginas que se van a monitorizar, se pueden agregar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Solo podemos monitorizar la URL, IP pública e IP privada que se monitorizan con **blackbox-exporter**.
+5) **ssl-docker-targets.yml** contiene una lista de páginas que se van a monitorizar, se pueden agregar con etiquetas como el estado y el tipo de IP utilizada para el monitoreo. Solo podemos monitorizar la URL, IP pública e IP privada que se monitorizan con **blackbox_exporter**.
 
 En el repositorio hay dos archivos .json que tienen dos dashboard de ejemplo: 
 1) Monitoreo Docker.json este dashboard monitorea los certificados ssl de las páginas web que tengamos y la utilización de RAM, CPU, tráfico de red, etc. de nuestro servidor docker.
@@ -118,7 +117,7 @@ Cada línea sirve para monitorizar el servidor y debe ir de la siguiente forma:
 
 Detalles:<br>
 
-**\<NODES_TARGETS_IP_PORT>:** Se debe poner la IP/URL en donde corre el node-exporter, osea la del servidor.
+**\<NODES_TARGETS_IP_PORT>:** Se debe poner la IP/URL en donde corre el node_exporter, osea la del servidor.
 
 **\<ESTADO>:** Sirve para agrupar LOS SERVIDORES, por ejemplo: Linux / Pruebas / Páginas
 
@@ -132,7 +131,7 @@ Ejemplo:
   - 192.250.4.2:8080:_:Soporte:_:soporte.strong.local # cadvisor para monitorear docker
 
   # En Producción
-  - node-exporter:9100:_:Linux:_:grafana.strong.local # node_exporter para monitorearla  máquina
+  - node_exporter:9100:_:Linux:_:grafana.strong.local # node_exporter para monitorearla  máquina
   - cadvisor:8080:_:Monitor:_:grafana.strong.local # cadvisor para monitorear docker
   - 192.243.0.181:9100:_:Paginas:_:sitio.com.ar # node_exporter para monitorear la máquina
   - 192.243.0.253:9100:_:Paginas:_:algo.sitio.com.ar # node_exporter para monitorear la máquina
@@ -176,3 +175,161 @@ Ejemplo:
   - 5.22.14.19:9115:_:icmp:_:Docker:_:PubDock:_:Paginas-WEB
   - 192.244.0.10:9115:_:icmp:_:Docker:_:PrivDock:_:Paginas-WEB
 ```
+<h1 id="Configuración de clientes">Configuración de clientes</h1>
+
+<h2 id="Instalación de node_exporter" >Instalación de node_exporter</h2>
+
+En sistemas basados en Debian debemos bajar el ejecutable desde la [página oficial](https://prometheus.io/download/) de Prometheus, podemos lograrlo yendo a la página y haciendo click derecho en la url del archivo y después en “Copiar enlace”
+
+![descarga_node_exporter](/imagenes/descarga_node_exporter.png)<br>
+
+Con esto podemos armar el comando para descargar la última versión del exporter
+
+```shell
+wget https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
+```
+
+Una vez descargado lo descomprimimos con
+```shell
+tar xvzf node_exporter-1.8.2.linux-amd64.tar.gz
+```
+
+Después cambiamos el propietario y grupo de los archivos descargados y movemos el ejecutable a la carpeta /usr/bin
+```shell
+chown -R root:root node_exporter-1.8.2.linux-amd64
+mv node_exporter-1.8.2.linux-amd64/node_exporter /usr/bin/
+```
+
+Ahora creamos un servicio en la carpeta systemd
+```shell
+vim /lib/systemd/system/node_exporter.service
+```
+
+Le pegamos el siguiente código:
+```shell
+[Unit]
+Description=Node Exporter
+After=network-online.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Recargamos los servicios
+```shell
+systemctl daemon-reload
+```
+
+Habilitamos el servicio node_exporter
+```shell
+systemctl enable node_exporter
+```
+
+Lo iniciamos
+```shell
+systemctl start node_exporter
+```
+
+Verificamos que esté corriendo sin errores
+```shell
+systemctl status node_exporter
+```
+
+![instala_node_exporter](/imagenes/instala_node_exporter.png)<br>
+
+Si vemos algo parecido es por que el servicio se inició sin errores
+
+<h2 id="Instalación de blackbox_exporter" >Instalación de blackbox_exporter</h2>
+
+En sistemas basados en Debian debemos bajar el ejecutable desde la [página oficial](https://prometheus.io/download/) de Prometheus, podemos lograrlo yendo a la página y haciendo click derecho en la url del archivo y después en “Copiar enlace”
+
+![descarga_blackbox_exporter](/imagenes/descarga_blackbox_exporter.png)<br>
+
+Con esto podemos armar el comando para descargar la última versión del exporter
+```shell
+wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.25.0/blackbox_exporter-0.25.0.linux-amd64.tar.gz
+```
+
+Una vez descargado lo descomprimimos con
+```shell
+tar xvzf blackbox_exporter-0.25.0.linux-amd64.tar.gz
+```
+
+Después cambiamos el propietario y grupo de los archivos descargados y movemos el ejecutable a la carpeta /usr/bin
+```shell
+chown -R root:root blackbox_exporter-0.25.0.linux-amd64
+mv blackbox_exporter-0.25.0.linux-amd64/blackbox_exporter /usr/bin/
+```
+
+También creamos la carpeta para guardar el archivo de configuración y lo movemos
+```shell
+mkdir /etc/prometheus && mv blackbox_exporter-0.25.0.linux-amd64/blackbox.yml /etc/prometheus
+```
+
+Ahora creamos un servicio en la carpeta systemd
+```shell
+vim /lib/systemd/system/blackbox.service
+```
+
+Le pegamos el siguiente código:
+```shell
+[Unit]
+Description=Blackbox Exporter Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/bin/blackbox_exporter \
+  --config.file=/etc/prometheus/blackbox.yml \
+  --web.listen-address=":9115"
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Recargamos los servicios
+```shell
+systemctl daemon-reload
+```
+
+Habilitamos el servicio node_exporter
+```shell
+systemctl enable blackbox
+```
+
+Lo iniciamos
+```shell
+systemctl start blackbox
+```
+
+Verificamos que esté corriendo sin errores
+```shell
+systemctl status blackbox
+```
+![instala_blackbox_exporter](/imagenes/instala_blackbox_exporter.png)<br>
+
+Si vemos algo parecido es por que el servicio se inició sin errores
+
+<h2 id="Instalación en Docker>">Instalación en Docker</h2>
+
+Se puede descargar el archivo exporters.yml desde la esta página de Git o la mejor opción es descargarlo en el servidor a monitorizar con:
+```shell
+wget https://github.com/Mikiztly/grafana/raw/refs/heads/main/exporters.yml
+```
+
+Este archivo tiene los cuatro exporters para poder obtener toda la información del servidor, también se puede crear un compose con los exporters que se necesiten. Una vez bajado o creado el archivo compose se puede cargar en docker con el siguiente comando:
+```shell
+docker-compose -f exporters.yml up -d
+```
+
